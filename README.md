@@ -60,10 +60,47 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 This library is licensed under the MIT-0 License. See the [LICENSE](LICENSE) file.
 
-
 # ADD-ON
 
 1. Use Spoke A as the Application VPC and Spoke B as Integration VPC
-2. Deploy a Private API into Spoke B to serve as the integration endpoint
-3. Test the network traffic flow...
+1. Deploy a Private API into Spoke B to serve as the integration endpoint
+1. Test the network traffic flow...
 
+## Testing
+
+Check the terraform output and note down the it_test_api_endpoint
+
+Connect to EC2 in Spoke A to make a call to the private API hosted in the Spoke B VPC
+
+```
+curl -v GET https://z0xhl2gf87.execute-api.ap-southeast-1.amazonaws.com/default/verify_token
+```
+
+TODO:
+1. The above endpoint can be access from Spoke B VPC as the API endpoint is created in this VPC and the DNS hostname works.
+1. Calling from Spoke A VPC will not resolve the DNS name for the private API endpoint in Spoke B VPC.
+1. Questions
+   - If the integration subnet is in the Application VPC then the private API DNS should work
+   - If the integration subnet is in another VPC, ie. Integration VPC, how do we make it resolve the private API DNS name then?
+   - Use a shared private hosted zone to solve this??
+
+Solution:
+1. Option 1: Use Route53 Alias
+
+```
+curl -i https://z0xhl2gf87-vpce-03d66af5360d46719.execute-api.ap-southeast-1.amazonaws.com/default/verify_token
+```
+
+1. Option 2: Use the public DNS name of the VPC endpoint with `Host` header
+
+```
+curl -i https://vpce-03d66af5360d46719-s7gfnlhd.execute-api.ap-southeast-1.vpce.amazonaws.com/default/verify_token -H "Host: z0xhl2gf87.execute-api.ap-southeast-1.amazonaws.com"
+```
+
+Some references:
+* https://faun.pub/creating-aws-api-gateway-with-private-endpoint-using-terraform-e5b1f8034982
+* [Accessing your private API using a Route53 alias](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-private-api-test-invoke-url.html#apigateway-private-api-route53-alias)
+
+
+Troubleshooting:
+1. API Gateway does not use the latest Lambda version?

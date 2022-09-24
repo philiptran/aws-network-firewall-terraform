@@ -64,7 +64,8 @@ resource "aws_networkfirewall_rule_group" "drop_non_http_between_vpcs" {
     }
     rules_source {
       rules_string = <<EOF
-      drop tcp $SPOKE_VPCS any <> $SPOKE_VPCS any (msg:"Blocked TCP that is not HTTP"; flow:established; app-layer-protocol:!http; sid:100; rev:1;)
+      #To find out why dropping tcp !http is blocking https traffic!
+      #drop tcp $SPOKE_VPCS any <> $SPOKE_VPCS any (msg:"Blocked TCP that is not HTTP"; flow:established; app-layer-protocol:!http; sid:100; rev:1;)
       drop ip $SPOKE_VPCS any <> $SPOKE_VPCS any (msg: "Block non-TCP traffic."; ip_proto:!TCP;sid:200; rev:1;)
       EOF
     }
