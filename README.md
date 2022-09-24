@@ -60,3 +60,10 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 This library is licensed under the MIT-0 License. See the [LICENSE](LICENSE) file.
 
+
+# ADD-ON
+
+1. Use Spoke A as the Application VPC and Spoke B as Integration VPC
+2. Deploy a Private API into Spoke B to serve as the integration endpoint
+3. Test the network traffic flow...
+

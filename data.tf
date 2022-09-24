@@ -1,5 +1,6 @@
 data "aws_availability_zones" "available" {
   state = "available"
+  exclude_names = ["ap-southeast-1c"]
 }
 
 data "aws_ami" "amazon-linux-2" {
