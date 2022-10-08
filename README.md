@@ -88,7 +88,7 @@ Solution:
 1. Option 1: Use Route53 Alias
 
 ```
-curl -i https://z0xhl2gf87-vpce-03d66af5360d46719.execute-api.ap-southeast-1.amazonaws.com/default/verify_token
+curl -i https://z0xhl2gf87-vpce-03d66af5360d46719.execute-api.ap-southeast-1.amazonaws.com/default/verify_token?url=https://www.amazon.com
 ```
 
 1. Option 2: Use the public DNS name of the VPC endpoint with `Host` header
