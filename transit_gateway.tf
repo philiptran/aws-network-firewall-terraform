@@ -24,33 +24,33 @@ resource "aws_ec2_transit_gateway_route_table" "inspection_route_table" {
 }
 
 
-resource "aws_ec2_transit_gateway_vpc_attachment" "spoke_vpc_a_tgw_attachment" {
-  subnet_ids                                      = aws_subnet.spoke_vpc_a_tgw_subnet[*].id
+resource "aws_ec2_transit_gateway_vpc_attachment" "app1_vpc_tgw_attachment" {
+  subnet_ids                                      = aws_subnet.app1_vpc_tgw_subnet[*].id
   transit_gateway_id                              = aws_ec2_transit_gateway.tgw.id
-  vpc_id                                          = aws_vpc.spoke_vpc_a.id
+  vpc_id                                          = aws_vpc.app1_vpc.id
   transit_gateway_default_route_table_association = false
   tags = {
-    Name = "spoke-vpc-a-attachment"
+    Name = "app1-vpc-attachment"
   }
 }
 
-resource "aws_ec2_transit_gateway_route_table_association" "spoke_vpc_a_tgw_attachment_rt_association" {
-  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.spoke_vpc_a_tgw_attachment.id
+resource "aws_ec2_transit_gateway_route_table_association" "app1_vpc_tgw_attachment_rt_association" {
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.app1_vpc_tgw_attachment.id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.spoke_route_table.id
 }
 
-resource "aws_ec2_transit_gateway_vpc_attachment" "spoke_vpc_b_tgw_attachment" {
-  subnet_ids                                      = aws_subnet.spoke_vpc_b_tgw_subnet[*].id
+resource "aws_ec2_transit_gateway_vpc_attachment" "integration_vpc_tgw_attachment" {
+  subnet_ids                                      = aws_subnet.integration_vpc_tgw_subnet[*].id
   transit_gateway_id                              = aws_ec2_transit_gateway.tgw.id
-  vpc_id                                          = aws_vpc.spoke_vpc_b.id
+  vpc_id                                          = aws_vpc.integration_vpc.id
   transit_gateway_default_route_table_association = false
   tags = {
-    Name = "spoke-vpc-b-attachment"
+    Name = "integration-vpc-attachment"
   }
 }
 
-resource "aws_ec2_transit_gateway_route_table_association" "spoke_vpc_b_tgw_attachment_rt_association" {
-  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.spoke_vpc_b_tgw_attachment.id
+resource "aws_ec2_transit_gateway_route_table_association" "integration_vpc_tgw_attachment_rt_association" {
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.integration_vpc_tgw_attachment.id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.spoke_route_table.id
 }
 
@@ -76,13 +76,13 @@ resource "aws_ec2_transit_gateway_route_table_association" "inspection_vpc_tgw_a
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.inspection_route_table.id
 }
 
-resource "aws_ec2_transit_gateway_route_table_propagation" "inspection_route_table_propagate_spoke_vpc_a" {
-  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.spoke_vpc_a_tgw_attachment.id
+resource "aws_ec2_transit_gateway_route_table_propagation" "inspection_route_table_propagate_app1_vpc" {
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.app1_vpc_tgw_attachment.id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.inspection_route_table.id
 }
 
-resource "aws_ec2_transit_gateway_route_table_propagation" "inspection_route_table_propagate_spoke_vpc_b" {
-  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.spoke_vpc_b_tgw_attachment.id
+resource "aws_ec2_transit_gateway_route_table_propagation" "inspection_route_table_propagate_integration_vpc" {
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.integration_vpc_tgw_attachment.id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.inspection_route_table.id
 }
 
@@ -112,6 +112,12 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "ingressegress_vpc_tgw_attachm
 resource "aws_ec2_transit_gateway_route_table_association" "ingressegress_vpc_tgw_attachment_rt_association" {
   transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.ingressegress_vpc_tgw_attachment.id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.ingressegress_route_table.id
+}
+
+# Add route propagation to inspection_route_table
+resource "aws_ec2_transit_gateway_route_table_propagation" "inspection_route_table_propagate_ingressegress_vpc" {
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.inspection_route_table.id
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.ingressegress_vpc_tgw_attachment.id
 }
 
 # Route incoming traffic to the Inspection VPC attachment

@@ -1,13 +1,13 @@
 resource "aws_security_group" "api_endpoint_sg" {
   name = "api_endpoint_sg"
   description = "Allow HTTPS inbound traffic"
-  vpc_id = aws_vpc.spoke_vpc_b.id
+  vpc_id = aws_vpc.integration_vpc.id
   ingress {
     description = "HTTPS from VPC"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [aws_vpc.spoke_vpc_b.cidr_block,aws_vpc.spoke_vpc_a.cidr_block]
+    cidr_blocks = [aws_vpc.integration_vpc.cidr_block,aws_vpc.app1_vpc.cidr_block]
   }
   egress {
     from_port   = 0
@@ -21,10 +21,10 @@ resource "aws_security_group" "api_endpoint_sg" {
 }
 
 resource "aws_vpc_endpoint" "api_gateway_endpoint" {
-  vpc_id = aws_vpc.spoke_vpc_b.id
+  vpc_id = aws_vpc.integration_vpc.id
   service_name = "com.amazonaws.${data.aws_region.current.name}.execute-api"
   private_dns_enabled = true
-  subnet_ids = [for s in aws_subnet.spoke_vpc_b_protected_subnet : s.id]
+  subnet_ids = [for s in aws_subnet.integration_vpc_protected_subnet : s.id]
   security_group_ids = [aws_security_group.api_endpoint_sg.id]
   vpc_endpoint_type = "Interface"
   tags = {

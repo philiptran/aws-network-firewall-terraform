@@ -66,7 +66,7 @@ resource "aws_lambda_function" "it_test_lambda" {
   timeout = 300
 
   vpc_config {
-    subnet_ids = [for s in aws_subnet.spoke_vpc_b_protected_subnet: s.id]
-    security_group_ids = [aws_security_group.spoke_vpc_b_host_sg.id]
+    subnet_ids = [for s in aws_subnet.integration_vpc_protected_subnet: s.id]
+    security_group_ids = [aws_security_group.integration_vpc_host_sg.id]
   }
 }

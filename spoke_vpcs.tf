@@ -1,127 +1,127 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-resource "aws_vpc" "spoke_vpc_a" {
-  cidr_block           = local.spoke_vpc_a_cidr
+resource "aws_vpc" "app1_vpc" {
+  cidr_block           = local.app1_vpc_cidr
   instance_tenancy     = "default"
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name = "spoke-vpc-a"
+    Name = "app1-vpc"
   }
 }
 
-resource "aws_subnet" "spoke_vpc_a_protected_subnet" {
+resource "aws_subnet" "app1_vpc_protected_subnet" {
   count                   = length(data.aws_availability_zones.available.names)
   map_public_ip_on_launch = false
-  vpc_id                  = aws_vpc.spoke_vpc_a.id
+  vpc_id                  = aws_vpc.app1_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.spoke_vpc_a_cidr, 8, 10 + count.index)
+  cidr_block              = cidrsubnet(local.app1_vpc_cidr, 8, 10 + count.index)
 
   tags = {
-    Name = "spoke-vpc-a/${data.aws_availability_zones.available.names[count.index]}/protected-subnet"
+    Name = "app1-vpc/${data.aws_availability_zones.available.names[count.index]}/protected-subnet"
   }
 }
 
-resource "aws_subnet" "spoke_vpc_a_endpoint_subnet" {
+resource "aws_subnet" "app1_vpc_endpoint_subnet" {
   count                   = length(data.aws_availability_zones.available.names)
   map_public_ip_on_launch = false
-  vpc_id                  = aws_vpc.spoke_vpc_a.id
+  vpc_id                  = aws_vpc.app1_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.spoke_vpc_a_cidr, 8, 20 + count.index)
+  cidr_block              = cidrsubnet(local.app1_vpc_cidr, 8, 20 + count.index)
 
   tags = {
-    Name = "spoke-vpc-a/${data.aws_availability_zones.available.names[count.index]}/endpoint-subnet"
+    Name = "app1-vpc/${data.aws_availability_zones.available.names[count.index]}/endpoint-subnet"
   }
 }
 
-resource "aws_subnet" "spoke_vpc_a_tgw_subnet" {
+resource "aws_subnet" "app1_vpc_tgw_subnet" {
   count                   = length(data.aws_availability_zones.available.names)
   map_public_ip_on_launch = false
-  vpc_id                  = aws_vpc.spoke_vpc_a.id
+  vpc_id                  = aws_vpc.app1_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.spoke_vpc_a_cidr, 8, 30 + count.index)
+  cidr_block              = cidrsubnet(local.app1_vpc_cidr, 8, 30 + count.index)
 
   tags = {
-    Name = "spoke-vpc-a/${data.aws_availability_zones.available.names[count.index]}/tgw-subnet"
+    Name = "app1-vpc/${data.aws_availability_zones.available.names[count.index]}/tgw-subnet"
   }
 }
 
 
-resource "aws_route_table" "spoke_vpc_a_route_table" {
-  vpc_id = aws_vpc.spoke_vpc_a.id
+resource "aws_route_table" "app1_vpc_route_table" {
+  vpc_id = aws_vpc.app1_vpc.id
   route {
     cidr_block         = "0.0.0.0/0"
     transit_gateway_id = aws_ec2_transit_gateway.tgw.id
   }
   tags = {
-    Name = "spoke-vpc-a/route-table"
+    Name = "app1-vpc/route-table"
   }
 }
 
-resource "aws_route_table_association" "spoke_vpc_a_route_table_association" {
-  count          = length(aws_subnet.spoke_vpc_a_protected_subnet[*])
-  subnet_id      = aws_subnet.spoke_vpc_a_protected_subnet[count.index].id
-  route_table_id = aws_route_table.spoke_vpc_a_route_table.id
+resource "aws_route_table_association" "app1_vpc_route_table_association" {
+  count          = length(aws_subnet.app1_vpc_protected_subnet[*])
+  subnet_id      = aws_subnet.app1_vpc_protected_subnet[count.index].id
+  route_table_id = aws_route_table.app1_vpc_route_table.id
 }
 
-resource "aws_vpc" "spoke_vpc_b" {
-  cidr_block           = local.spoke_vpc_b_cidr
+resource "aws_vpc" "integration_vpc" {
+  cidr_block           = local.integration_vpc_cidr
   instance_tenancy     = "default"
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name = "spoke-vpc-b"
+    Name = "integration-vpc"
   }
 }
 
-resource "aws_subnet" "spoke_vpc_b_protected_subnet" {
+resource "aws_subnet" "integration_vpc_protected_subnet" {
   count                   = length(data.aws_availability_zones.available.names)
   map_public_ip_on_launch = false
-  vpc_id                  = aws_vpc.spoke_vpc_b.id
+  vpc_id                  = aws_vpc.integration_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.spoke_vpc_b_cidr, 8, 10 + count.index)
+  cidr_block              = cidrsubnet(local.integration_vpc_cidr, 8, 10 + count.index)
   tags = {
-    Name = "spoke-vpc-b/${data.aws_availability_zones.available.names[count.index]}/protected-subnet"
+    Name = "integration-vpc/${data.aws_availability_zones.available.names[count.index]}/protected-subnet"
   }
 }
 
-resource "aws_subnet" "spoke_vpc_b_endpoint_subnet" {
+resource "aws_subnet" "integration_vpc_endpoint_subnet" {
   count                   = length(data.aws_availability_zones.available.names)
   map_public_ip_on_launch = false
-  vpc_id                  = aws_vpc.spoke_vpc_b.id
+  vpc_id                  = aws_vpc.integration_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.spoke_vpc_b_cidr, 8, 20 + count.index)
+  cidr_block              = cidrsubnet(local.integration_vpc_cidr, 8, 20 + count.index)
 
   tags = {
-    Name = "spoke-vpc-b/${data.aws_availability_zones.available.names[count.index]}/endpoint-subnet"
+    Name = "integration-vpc/${data.aws_availability_zones.available.names[count.index]}/endpoint-subnet"
   }
 }
 
-resource "aws_subnet" "spoke_vpc_b_tgw_subnet" {
+resource "aws_subnet" "integration_vpc_tgw_subnet" {
   count                   = length(data.aws_availability_zones.available.names)
   map_public_ip_on_launch = false
-  vpc_id                  = aws_vpc.spoke_vpc_b.id
+  vpc_id                  = aws_vpc.integration_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.spoke_vpc_b_cidr, 8, 30 + count.index)
+  cidr_block              = cidrsubnet(local.integration_vpc_cidr, 8, 30 + count.index)
   tags = {
-    Name = "spoke-vpc-b/${data.aws_availability_zones.available.names[count.index]}/tgw-subnet"
+    Name = "integration-vpc/${data.aws_availability_zones.available.names[count.index]}/tgw-subnet"
   }
 }
 
-resource "aws_route_table" "spoke_vpc_b_route_table" {
-  vpc_id = aws_vpc.spoke_vpc_b.id
+resource "aws_route_table" "integration_vpc_route_table" {
+  vpc_id = aws_vpc.integration_vpc.id
   route {
     cidr_block         = "0.0.0.0/0"
     transit_gateway_id = aws_ec2_transit_gateway.tgw.id
   }
   tags = {
-    Name = "spoke-vpc-b/route-table"
+    Name = "integration-vpc/route-table"
   }
 }
 
-resource "aws_route_table_association" "spoke_vpc_b_route_table_association" {
-  count          = length(aws_subnet.spoke_vpc_b_protected_subnet[*])
-  subnet_id      = aws_subnet.spoke_vpc_b_protected_subnet[count.index].id
-  route_table_id = aws_route_table.spoke_vpc_b_route_table.id
+resource "aws_route_table_association" "integration_vpc_route_table_association" {
+  count          = length(aws_subnet.integration_vpc_protected_subnet[*])
+  subnet_id      = aws_subnet.integration_vpc_protected_subnet[count.index].id
+  route_table_id = aws_route_table.integration_vpc_route_table.id
 }

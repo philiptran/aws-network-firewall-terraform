@@ -4,8 +4,8 @@ variable "super_cidr_block" {
 }
 
 locals {
-  spoke_vpc_a_cidr    = cidrsubnet(var.super_cidr_block, 8, 10)
-  spoke_vpc_b_cidr    = cidrsubnet(var.super_cidr_block, 8, 11)
+  app1_vpc_cidr    = cidrsubnet(var.super_cidr_block, 8, 10)
+  integration_vpc_cidr    = cidrsubnet(var.super_cidr_block, 8, 11)
   inspection_vpc_cidr = cidrsubnet(var.super_cidr_block, 8, 255)
   ingressegress_vpc_cidr = cidrsubnet(var.super_cidr_block, 8, 100)
 }

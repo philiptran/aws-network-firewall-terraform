@@ -58,7 +58,7 @@ resource "aws_networkfirewall_rule_group" "drop_non_http_between_vpcs" {
       ip_sets {
         key = "SPOKE_VPCS"
         ip_set {
-          definition = [aws_vpc.spoke_vpc_a.cidr_block, aws_vpc.spoke_vpc_b.cidr_block]
+          definition = [aws_vpc.app1_vpc.cidr_block, aws_vpc.integration_vpc.cidr_block]
         }
       }
     }
@@ -105,7 +105,7 @@ resource "aws_networkfirewall_rule_group" "block_domains" {
       ip_sets {
         key = "HOME_NET"
         ip_set {
-          definition = [aws_vpc.spoke_vpc_a.cidr_block, aws_vpc.spoke_vpc_b.cidr_block]
+          definition = [aws_vpc.app1_vpc.cidr_block, aws_vpc.integration_vpc.cidr_block]
         }
       }
     }
