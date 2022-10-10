@@ -14,7 +14,7 @@ resource "aws_subnet" "inspection_vpc_firewall_subnet" {
   map_public_ip_on_launch = false
   vpc_id                  = aws_vpc.inspection_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.inspection_vpc_cidr, 8, 20 + count.index)
+  cidr_block              = cidrsubnet(local.inspection_vpc_cidr, 4, 3 + count.index)
   tags = {
     Name = "inspection-vpc/${data.aws_availability_zones.available.names[count.index]}/firewall-subnet"
   }
@@ -25,7 +25,7 @@ resource "aws_subnet" "inspection_vpc_tgw_subnet" {
   map_public_ip_on_launch = false
   vpc_id                  = aws_vpc.inspection_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.inspection_vpc_cidr, 8, 30 + count.index)
+  cidr_block              = cidrsubnet(local.inspection_vpc_cidr, 4, count.index)
   tags = {
     Name = "inspection-vpc/${data.aws_availability_zones.available.names[count.index]}/tgw-subnet"
   }

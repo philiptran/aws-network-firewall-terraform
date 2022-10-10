@@ -14,7 +14,7 @@ resource "aws_subnet" "ingressegress_vpc_public_subnet" {
   map_public_ip_on_launch = true
   vpc_id                  = aws_vpc.ingressegress_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.ingressegress_vpc_cidr, 8, 10 + count.index)
+  cidr_block              = cidrsubnet(local.ingressegress_vpc_cidr, 4, 3 + count.index)
   depends_on              = [aws_internet_gateway.ingressegress_vpc_igw]
   tags = {
     Name = "ingressegress-vpc/${data.aws_availability_zones.available.names[count.index]}/public-subnet"
@@ -49,7 +49,7 @@ resource "aws_subnet" "ingressegress_vpc_tgw_subnet" {
   map_public_ip_on_launch = false
   vpc_id                  = aws_vpc.ingressegress_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.ingressegress_vpc_cidr, 8, 30 + count.index)
+  cidr_block              = cidrsubnet(local.ingressegress_vpc_cidr, 4, count.index)
   tags = {
     Name = "ingressegress-vpc/${data.aws_availability_zones.available.names[count.index]}/tgw-subnet"
   }

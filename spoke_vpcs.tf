@@ -16,7 +16,7 @@ resource "aws_subnet" "app1_vpc_protected_subnet" {
   map_public_ip_on_launch = false
   vpc_id                  = aws_vpc.app1_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.app1_vpc_cidr, 8, 10 + count.index)
+  cidr_block              = cidrsubnet(local.app1_vpc_cidr, 4, 3 + count.index)
 
   tags = {
     Name = "app1-vpc/${data.aws_availability_zones.available.names[count.index]}/protected-subnet"
@@ -28,7 +28,7 @@ resource "aws_subnet" "app1_vpc_endpoint_subnet" {
   map_public_ip_on_launch = false
   vpc_id                  = aws_vpc.app1_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.app1_vpc_cidr, 8, 20 + count.index)
+  cidr_block              = cidrsubnet(local.app1_vpc_cidr, 4, 6 + count.index)
 
   tags = {
     Name = "app1-vpc/${data.aws_availability_zones.available.names[count.index]}/endpoint-subnet"
@@ -40,7 +40,7 @@ resource "aws_subnet" "app1_vpc_tgw_subnet" {
   map_public_ip_on_launch = false
   vpc_id                  = aws_vpc.app1_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.app1_vpc_cidr, 8, 30 + count.index)
+  cidr_block              = cidrsubnet(local.app1_vpc_cidr, 4, count.index)
 
   tags = {
     Name = "app1-vpc/${data.aws_availability_zones.available.names[count.index]}/tgw-subnet"
@@ -80,7 +80,7 @@ resource "aws_subnet" "integration_vpc_protected_subnet" {
   map_public_ip_on_launch = false
   vpc_id                  = aws_vpc.integration_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.integration_vpc_cidr, 8, 10 + count.index)
+  cidr_block              = cidrsubnet(local.integration_vpc_cidr, 4, 3 + count.index)
   tags = {
     Name = "integration-vpc/${data.aws_availability_zones.available.names[count.index]}/protected-subnet"
   }
@@ -91,7 +91,7 @@ resource "aws_subnet" "integration_vpc_endpoint_subnet" {
   map_public_ip_on_launch = false
   vpc_id                  = aws_vpc.integration_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.integration_vpc_cidr, 8, 20 + count.index)
+  cidr_block              = cidrsubnet(local.integration_vpc_cidr, 4, 6 + count.index)
 
   tags = {
     Name = "integration-vpc/${data.aws_availability_zones.available.names[count.index]}/endpoint-subnet"
@@ -103,7 +103,7 @@ resource "aws_subnet" "integration_vpc_tgw_subnet" {
   map_public_ip_on_launch = false
   vpc_id                  = aws_vpc.integration_vpc.id
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = cidrsubnet(local.integration_vpc_cidr, 8, 30 + count.index)
+  cidr_block              = cidrsubnet(local.integration_vpc_cidr, 4, count.index)
   tags = {
     Name = "integration-vpc/${data.aws_availability_zones.available.names[count.index]}/tgw-subnet"
   }
