@@ -2,8 +2,8 @@
 
 This repository contains terraform code to deploy a sample architecture to try AWS Network Firewall. The resources deployed and the architectural pattern they follow is purely for demonstration/testing purposes. If you are looking for a set of approved architectures, read this [blog post](https://aws.amazon.com/blogs/networking-and-content-delivery/deployment-models-for-aws-network-firewall/).
 
-The image below is a graphical representation of what resources are defined in the Terraform code in this repository: 
-![Architectural Diagram with Two Spoke VPCs, Transit Gateway, Ingress/Egress VPC and Inspection VPC](images/anfw-terraform-sample.jpg "Architectural Diagram")
+[TODO] The image below is a graphical representation of what resources are defined in the Terraform code in this repository: 
+![Architectural Diagram with Two Spoke VPCs, Transit Gateway, Ingress/Egress VPC and Inspection VPC](images/anfw-terraform-TODO.jpg "Architectural Diagram")
 
 The templates deploy three VPCs (`app1-vpc`, `integration-vpc`, `ingress/egress vpc` and `inspection vpc`).
 AWS Network Firewall endpoints are deployed in the Inspection VPC. 
