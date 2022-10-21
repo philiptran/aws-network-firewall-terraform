@@ -31,3 +31,7 @@ resource "aws_vpc_endpoint" "api_gateway_endpoint" {
     Name = "api_gateway_endpoint"
   }
 }
+
+output "api_gw_endpoint" {
+  value = aws_vpc_endpoint.api_gateway_endpoint.id
+}

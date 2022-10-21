@@ -87,3 +87,7 @@ resource "aws_api_gateway_stage" "default_deployment" {
 output "it_test_api_endpoint" {
   value = aws_api_gateway_stage.default_deployment.invoke_url
 }
+
+output "it_test_api_endpoint_R53alias" {
+  value = "https://${aws_api_gateway_stage.default_deployment.rest_api_id}-${aws_vpc_endpoint.api_gateway_endpoint.id}.execute-api.ap-southeast-1.amazonaws.com/default/verify_token?url=https://www.amazon.com"
+}

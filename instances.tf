@@ -27,7 +27,7 @@ resource "aws_security_group" "app1_vpc_host_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [aws_vpc.app1_vpc.cidr_block, aws_vpc.integration_vpc.cidr_block]
+    cidr_blocks = [aws_vpc.ingressegress_vpc.cidr_block, aws_vpc.app1_vpc.cidr_block, aws_vpc.integration_vpc.cidr_block]
   }
   egress {
     from_port   = 0
@@ -40,6 +40,7 @@ resource "aws_security_group" "app1_vpc_host_sg" {
   }
 }
 
+# Create an instance in integration VPC for "ping" tests
 resource "aws_security_group" "integration_vpc_host_sg" {
   name        = "integration-vpc/sg-host"
   description = "Allow all traffic from VPCs inbound and all outbound"
@@ -194,6 +195,54 @@ resource "aws_instance" "integration_vpc_host" {
   }
   user_data = file("install-nginx.sh")
 }
+
+# Create an internal NLB to front the EC2 instances in Application VPC
+resource "aws_lb" "app_nlb" {
+  name               = "app-nlb"
+  load_balancer_type = "network"
+  subnets            = aws_subnet.app1_vpc_protected_subnet[*].id
+  enable_cross_zone_load_balancing = true
+  internal = true
+}
+resource "aws_lb_listener" "app_nlb_listener" {
+  load_balancer_arn = aws_lb.app_nlb.arn
+  protocol          = "TCP"
+  port              = 80
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.app_nlb_targetgroup.arn
+  }
+}
+
+resource "aws_lb_target_group" "app_nlb_targetgroup" {
+  name = "app-nlb-tg"
+  port = 80
+  protocol = "TCP"
+  vpc_id = aws_vpc.app1_vpc.id
+  depends_on = [aws_lb.app_nlb]
+  lifecycle {
+    create_before_destroy = true
+  }
+  # IP-based target type
+  target_type = "ip"
+
+  stickiness {
+    enabled = true
+    type = "source_ip"
+  }
+}
+resource "aws_lb_target_group_attachment" "app_nlb_tg_targets" {
+  target_group_arn  = aws_lb_target_group.app_nlb_targetgroup.arn
+  target_id         = aws_instance.app1_vpc_host.private_ip
+  port              = 80
+}
+
+#TODO: create a autoscaling group for EC2 instances
+#resource "aws_autoscaling_attachment" "app_nlb_targetgroup_targets" {
+#  autoscaling_group_name = ...
+#  alb_target_group_arn = aws_lb_target_group.app_nlb_targetgroup.arn
+#}
+
 
 output "app1_vpc_host_ip" {
   value = aws_instance.app1_vpc_host.private_ip
