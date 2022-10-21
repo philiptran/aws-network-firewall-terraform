@@ -8,7 +8,7 @@ resource "aws_api_gateway_rest_api" "it_test_api" {
 
 resource "aws_api_gateway_resource" "it_test_api" {
   parent_id = aws_api_gateway_rest_api.it_test_api.root_resource_id
-  path_part = "verify_token"
+  path_part = "ext1"
   rest_api_id = aws_api_gateway_rest_api.it_test_api.id
 }
 
@@ -82,12 +82,4 @@ resource "aws_api_gateway_stage" "default_deployment" {
   deployment_id = aws_api_gateway_deployment.default_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.it_test_api.id
   stage_name    = "default"
-}
-
-output "it_test_api_endpoint" {
-  value = aws_api_gateway_stage.default_deployment.invoke_url
-}
-
-output "it_test_api_endpoint_R53alias" {
-  value = "https://${aws_api_gateway_stage.default_deployment.rest_api_id}-${aws_vpc_endpoint.api_gateway_endpoint.id}.execute-api.ap-southeast-1.amazonaws.com/default/verify_token?url=https://www.amazon.com"
 }

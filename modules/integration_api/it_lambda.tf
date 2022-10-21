@@ -57,6 +57,29 @@ data "archive_file" "it_test_lambda" {
   output_path = "${path.module}/lambda/it-test-lambda.zip"
 }
 
+resource "aws_security_group" "it_test_lambda_sg" {
+  name        = "integration-vpc/it_test_lambda_sg"
+  description = "Allow all traffic from VPCs inbound and all outbound"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.super_cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "integration-vpc/it_test_lambda_sg"
+  }
+}
+
 resource "aws_lambda_function" "it_test_lambda" {
   filename = data.archive_file.it_test_lambda.output_path
   function_name = "it_test_lambda-${random_string.random.result}"
@@ -66,7 +89,9 @@ resource "aws_lambda_function" "it_test_lambda" {
   timeout = 300
 
   vpc_config {
-    subnet_ids = [for s in aws_subnet.integration_vpc_protected_subnet: s.id]
-    security_group_ids = [aws_security_group.integration_vpc_host_sg.id]
+    //subnet_ids = [for s in aws_subnet.integration_vpc_protected_subnet: s.id]
+    //security_group_ids = [aws_security_group.integration_vpc_host_sg.id]
+    subnet_ids = var.subnet_ids
+    security_group_ids = [aws_security_group.it_test_lambda_sg.id]
   }
 }
