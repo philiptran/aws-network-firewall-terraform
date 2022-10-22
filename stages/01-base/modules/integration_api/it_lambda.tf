@@ -47,7 +47,7 @@ resource "random_string" "random" {
   length  = 8
   special = false
   upper   = false
-  number  = false
+  numeric  = false
 }
 
 # Create a zip file for the lambda function

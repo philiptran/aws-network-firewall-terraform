@@ -150,17 +150,24 @@ resource "random_string" "bucket_random_id" {
 
 resource "aws_s3_bucket" "anfw_flow_bucket" {
   bucket        = "network-firewall-flow-bucket-${random_string.bucket_random_id.id}"
-  acl           = "private"
   force_destroy = true
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm     = "AES256"
-      }
-    }
+}
+resource "aws_s3_bucket_versioning" "anfw_flow_bucket_versioning" {
+  bucket = aws_s3_bucket.anfw_flow_bucket.bucket
+  versioning_configuration {
+    status = "Enabled"
   }
-  versioning {
-    enabled = true
+}
+resource "aws_s3_bucket_acl" "anfw_flow_bucket_acl" {
+  bucket = aws_s3_bucket.anfw_flow_bucket.bucket
+  acl = "private"
+}
+resource "aws_s3_bucket_server_side_encryption_configuration" "anfw_flow_bucket_sse" {
+  bucket = aws_s3_bucket.anfw_flow_bucket.bucket
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm     = "AES256"
+    }
   }
 }
 
