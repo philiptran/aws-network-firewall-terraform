@@ -1,7 +1,7 @@
 data "terraform_remote_state" "parent" {
   backend = "local"
   config = {
-    path = "../../terraform.tfstate"
+    path = "../01-base/terraform.tfstate"
   }
 }
 

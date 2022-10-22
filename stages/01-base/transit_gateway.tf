@@ -109,10 +109,6 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "post_inspection_rout
   transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.integration_vpc_tgw_attachment.id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.post_inspection_route_table.id
 }
-resource "aws_ec2_transit_gateway_route_table_propagation" "post_inspection_route_table_propagate_ingressegress_vpc" {
-  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.post_inspection_route_table.id
-  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.ingressegress_vpc_tgw_attachment.id
-}
 
 # Routes for pre_inspection_route_table
 # Route all outbound traffic to inspection VPC by default
@@ -121,7 +117,10 @@ resource "aws_ec2_transit_gateway_route" "pre_inspection_route_table_default_rou
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.pre_inspection_route_table.id
   destination_cidr_block         = "0.0.0.0/0"
 }
-
+resource "aws_ec2_transit_gateway_route_table_propagation" "pre_inspection_route_table_propagate_integration_vpc" {
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.integration_vpc_tgw_attachment.id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.pre_inspection_route_table.id
+}
 resource "aws_ec2_transit_gateway_route_table_propagation" "pre_inspection_route_table_propagate_app1_vpc" {
   transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.app1_vpc_tgw_attachment.id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.pre_inspection_route_table.id

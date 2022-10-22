@@ -6,3 +6,4 @@ git-ignored/
 *.hcl
 backend.tf
 lambda/*.zip
+.tfstate.lock
