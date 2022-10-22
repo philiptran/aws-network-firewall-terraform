@@ -5,13 +5,6 @@ output "firewall_arn" {
 output "it_test_api_endpoint" {
   value = module.it_api.it_test_api_endpoint_R53alias
 }
-
-# For testing 
-#firewall sync states
-output "firewall_sync_states" {
-  value = module.firewall.firewall_sync_states
-}
-
 output "app1_vpc_host_ip" {
   value = aws_instance.app1_vpc_host.private_ip
 }
@@ -30,4 +23,10 @@ output "ingressegress_vpc_id" {
 
 output "ingressegress_vpc_public_subnet_ids" {
   value = aws_subnet.ingressegress_vpc_public_subnet[*].id
+}
+
+# For testing 
+#firewall sync states
+output "firewall_sync_states" {
+  value = module.firewall.firewall_sync_states
 }
