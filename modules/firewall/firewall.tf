@@ -58,7 +58,8 @@ resource "aws_networkfirewall_rule_group" "drop_non_http_between_vpcs" {
       ip_sets {
         key = "SPOKE_VPCS"
         ip_set {
-          definition = [aws_vpc.app1_vpc.cidr_block, aws_vpc.integration_vpc.cidr_block]
+          # definition = [aws_vpc.app1_vpc.cidr_block, aws_vpc.integration_vpc.cidr_block]
+          definition = var.ip_sets
         }
       }
     }
@@ -105,7 +106,8 @@ resource "aws_networkfirewall_rule_group" "block_domains" {
       ip_sets {
         key = "HOME_NET"
         ip_set {
-          definition = [aws_vpc.app1_vpc.cidr_block, aws_vpc.integration_vpc.cidr_block]
+          #definition = [aws_vpc.app1_vpc.cidr_block, aws_vpc.integration_vpc.cidr_block]
+          definition = var.ip_sets
         }
       }
     }
@@ -124,10 +126,10 @@ resource "aws_networkfirewall_rule_group" "block_domains" {
 resource "aws_networkfirewall_firewall" "inspection_vpc_anfw" {
   name                = "NetworkFirewall"
   firewall_policy_arn = aws_networkfirewall_firewall_policy.anfw_policy.arn
-  vpc_id              = aws_vpc.inspection_vpc.id
+  vpc_id              = var.vpc_id
 
   dynamic "subnet_mapping" {
-    for_each = aws_subnet.inspection_vpc_firewall_subnet[*].id
+    for_each = var.subnet_ids
 
     content {
       subnet_id = subnet_mapping.value

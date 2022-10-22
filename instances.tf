@@ -237,17 +237,17 @@ resource "aws_lb_target_group_attachment" "app_nlb_tg_targets" {
   port              = 80
 }
 
+# Get IP addresses of NLB 
+data "dns_a_record_set" "app_nlb_ips" {
+  host = aws_lb.app_nlb.dns_name
+}
+locals {
+  app_nlb_ips = toset(data.dns_a_record_set.app_nlb_ips.addrs)
+}
+
 #TODO: create a autoscaling group for EC2 instances
 #resource "aws_autoscaling_attachment" "app_nlb_targetgroup_targets" {
 #  autoscaling_group_name = ...
 #  alb_target_group_arn = aws_lb_target_group.app_nlb_targetgroup.arn
 #}
 
-
-output "app1_vpc_host_ip" {
-  value = aws_instance.app1_vpc_host.private_ip
-}
-
-output "integration_vpc_host_ip" {
-  value = aws_instance.integration_vpc_host.private_ip
-}
